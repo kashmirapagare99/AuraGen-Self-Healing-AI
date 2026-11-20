@@ -1,8 +1,4 @@
-import logging
-
 from .prompt import SYSTEM_PROMPT, parse_spec, user_message
-
-log = logging.getLogger(__name__)
 
 
 class ClaudeProvider:

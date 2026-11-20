@@ -1,11 +1,8 @@
 import json
-import logging
 import urllib.error
 import urllib.request
 
 from .prompt import SYSTEM_PROMPT, parse_spec, user_message
-
-log = logging.getLogger(__name__)
 
 URL = "https://api.groq.com/openai/v1/chat/completions"
 
