@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS outcomes (
     before_score INTEGER NOT NULL,
     after_score INTEGER NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_adaptations_created ON adaptations (created_at);
+CREATE INDEX IF NOT EXISTS idx_outcomes_created ON outcomes (created_at);
 """
 
 
@@ -37,6 +39,9 @@ class MetricsStore:
         self.conn = sqlite3.connect(path, check_same_thread=False)
         self.lock = threading.Lock()
         with self.lock:
+            if path != ":memory:":
+                # readers do not block the writer, which helps with a threaded server
+                self.conn.execute("PRAGMA journal_mode=WAL")
             self.conn.executescript(SCHEMA)
 
     def add_adaptation(self, reason, mode, source, score, event_count):

@@ -87,6 +87,22 @@ class TestMetricsStore:
         assert second.summary()["adaptations"]["byReason"] == {"hesitation": 1}
 
 
+    def test_file_database_uses_wal_and_has_indexes(self, tmp_path):
+        store = MetricsStore(str(tmp_path / "metrics.db"))
+        mode = store.conn.execute("PRAGMA journal_mode").fetchone()[0]
+        indexes = {row[1] for row in store.conn.execute(
+            "SELECT * FROM sqlite_master WHERE type = 'index'").fetchall()}
+        store.close()
+
+        assert mode == "wal"
+        assert {"idx_adaptations_created", "idx_outcomes_created"} <= indexes
+
+    def test_opening_an_existing_database_again_is_safe(self, tmp_path):
+        path = str(tmp_path / "metrics.db")
+        MetricsStore(path).close()
+        MetricsStore(path).close()
+
+
 class TestLayoutRules:
     @pytest.mark.parametrize("kinds, expected", [
         ([], "general"),
