@@ -17,8 +17,29 @@ class Settings:
     llm_timeout_seconds: float = 20.0
 
 
-def load_settings(env=None):
-    env = os.environ if env is None else env
+PROVIDERS = ("auto", "groq", "claude", "rules")
+LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
+
+
+class ConfigError(ValueError):
+    pass
+
+
+def check(settings):
+    if not 1 <= settings.port <= 65535:
+        raise ConfigError(f"PORT must be between 1 and 65535, got {settings.port}")
+    if settings.rate_limit_per_min < 1:
+        raise ConfigError("RATE_LIMIT_PER_MIN must be at least 1")
+    if settings.llm_timeout_seconds <= 0:
+        raise ConfigError("LLM_TIMEOUT_SECONDS must be greater than 0")
+    if settings.llm_provider not in PROVIDERS:
+        raise ConfigError(f"LLM_PROVIDER must be one of {', '.join(PROVIDERS)}, got '{settings.llm_provider}'")
+    if settings.log_level not in LOG_LEVELS:
+        raise ConfigError(f"LOG_LEVEL must be one of {', '.join(LOG_LEVELS)}, got '{settings.log_level}'")
+    return settings
+
+
+def read(env):
     origins = env.get("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000")
     return Settings(
         port=int(env.get("PORT", 4000)),
@@ -33,3 +54,12 @@ def load_settings(env=None):
         anthropic_model=env.get("ANTHROPIC_MODEL", "claude-opus-5-5"),
         llm_timeout_seconds=float(env.get("LLM_TIMEOUT_SECONDS", 20)),
     )
+
+
+def load_settings(env=None):
+    env = os.environ if env is None else env
+    try:
+        settings = read(env)
+    except ValueError as exc:
+        raise ConfigError(f"a numeric setting has a value that is not a number ({exc})") from None
+    return check(settings)
