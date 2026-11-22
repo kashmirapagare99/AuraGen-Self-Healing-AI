@@ -25,13 +25,16 @@ NEXT_PUBLIC_AURAGEN_ADAPTIVE_API_URL=http://localhost:4000/api/adaptive-ui
 | Method | Path | Description |
 |---|---|---|
 | GET | `/health` | Status, and which layout provider is active (`groq`, `claude` or `rules`) |
+| GET | `/api/config` | Non-secret runtime settings: provider, model, rate limit |
 | POST | `/api/adaptive-ui` | Takes `{score, events}`, returns `{uiSpec, reason}`. The `X-Aura-Source` header is `llm` or `rules` |
 | POST | `/api/insights` | Takes `{score, events}`, returns `{summary, suggestions, source, provider}`: 3 to 5 dashboard suggestions written by the AI from the session counts and the anonymous totals. Falls back to rule-based suggestions |
 | POST | `/api/metrics/outcome` | Stores a before/after score pair (`reason`, `mode`, `beforeScore`, `afterScore`) |
 | GET | `/api/metrics/summary` | Aggregate counts and averages |
 | WS | `/ws` | Send `{"type": "interaction_context", "payload": {...}}`, get `status`, `adaptive_ui` or `error` messages back |
 
-The frontend only calls `/api/adaptive-ui` today. The other endpoints are there for when it needs them.
+Request and response examples are in [docs/API.md](docs/API.md).
+
+The frontend uses `/api/adaptive-ui`, `/api/insights`, `/api/metrics/outcome` and `/api/metrics/summary`. It does not use the WebSocket yet.
 
 ## How a layout is chosen
 
