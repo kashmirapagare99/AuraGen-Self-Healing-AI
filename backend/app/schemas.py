@@ -23,6 +23,7 @@ Reason = Literal["repeated_clicks", "validation_errors", "hesitation", "general"
 Mode = Literal["wizard", "one_question"]
 
 Score = Annotated[int, Field(ge=0, le=100, strict=True)]
+MAX_EVENTS = 500
 
 
 class Strict(BaseModel):
@@ -38,7 +39,7 @@ class FrictionEvent(Strict):
 
 class InteractionContext(Strict):
     score: Score
-    events: list[FrictionEvent] = Field(max_length=500)
+    events: list[FrictionEvent] = Field(max_length=MAX_EVENTS)
 
 
 class UIField(Strict):

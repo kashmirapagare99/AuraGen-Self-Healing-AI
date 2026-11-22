@@ -24,6 +24,7 @@ def create_app(settings=None, provider="auto", store=None):
         provider = create_provider(settings)
 
     app = Flask(__name__)
+    app.settings = settings
     app.config["CORS_ORIGINS"] = list(settings.cors_origins)
     app.config["MAX_CONTENT_LENGTH"] = 100 * 1024
 

@@ -202,3 +202,26 @@ def test_only_api_routes_are_marked_no_store(client):
     assert "Cache-Control" not in client.get("/health").headers
     # errors get the headers as well
     assert client.get("/nope").headers["X-Content-Type-Options"] == "nosniff"
+
+
+def test_public_config_has_no_secrets(make_app):
+    class Named(StubProvider):
+        name = "groq"
+        model = "some-model"
+
+    settings_keys = {"groq_api_key": "dummy-secret-for-test", "db_path": "/private/path.db"}
+    res = make_app(provider=Named(), rate_limit_per_min=30, **settings_keys).test_client().get("/api/config")
+
+    assert res.get_json() == {
+        "provider": "groq",
+        "model": "some-model",
+        "rateLimitPerMin": 30,
+        "maxEventsPerRequest": 500,
+    }
+    assert "dummy-secret" not in res.get_data(as_text=True)
+    assert "private" not in res.get_data(as_text=True)
+
+
+def test_public_config_without_a_provider(client):
+    body = client.get("/api/config").get_json()
+    assert body["provider"] == "rules" and body["model"] is None

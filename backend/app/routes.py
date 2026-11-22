@@ -1,7 +1,7 @@
 from flask import Blueprint, current_app, jsonify, request
 from pydantic import ValidationError
 
-from .schemas import InteractionContext, Outcome
+from .schemas import MAX_EVENTS, InteractionContext, Outcome
 
 api = Blueprint("api", __name__)
 
@@ -31,6 +31,18 @@ def health():
         status="ok",
         llm=provider is not None,
         provider=getattr(provider, "name", "rules"),
+    )
+
+
+@api.get("/api/config")
+def public_config():
+    # nothing secret here: no keys, no origins, no file paths
+    provider = current_app.service.provider
+    return jsonify(
+        provider=getattr(provider, "name", "rules"),
+        model=getattr(provider, "model", None),
+        rateLimitPerMin=current_app.settings.rate_limit_per_min,
+        maxEventsPerRequest=MAX_EVENTS,
     )
 
 
