@@ -77,7 +77,10 @@ tests/              pytest suite
 
 ## Tests
 
+Install the development requirements once, then run pytest:
+
 ```
+pip install -r requirements-dev.txt
 pytest
 ```
 

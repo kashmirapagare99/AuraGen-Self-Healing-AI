@@ -4,4 +4,3 @@ flask-sock>=0.7
 pydantic>=2.11
 python-dotenv>=1.0
 anthropic>=2.0
-pytest>=8.0
