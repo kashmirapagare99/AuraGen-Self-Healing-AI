@@ -176,3 +176,15 @@ def test_bad_outcome(client):
     res = client.post("/api/metrics/outcome", json={
         "reason": "x", "mode": "wizard", "beforeScore": 1, "afterScore": 1})
     assert res.status_code == 400
+
+
+def test_requests_are_logged_without_their_content(client, caplog):
+    with caplog.at_level("INFO", logger="app.access"):
+        client.get("/health?secret=1")
+        post(client, {"score": 12, "events": []})
+
+    text = caplog.text
+    assert "GET /health 200" in text
+    assert "POST /api/adaptive-ui 200" in text
+    assert "secret" not in text
+    assert "score" not in text

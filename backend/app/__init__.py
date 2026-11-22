@@ -1,4 +1,7 @@
-from flask import Flask, jsonify
+import logging
+import time
+
+from flask import Flask, g, jsonify, request
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
@@ -10,6 +13,9 @@ from .providers import create_provider
 from .ratelimit import RateLimiter
 from .routes import api
 from .sockets import sock
+
+
+access_log = logging.getLogger("app.access")
 
 
 def create_app(settings=None, provider="auto", store=None):
@@ -30,6 +36,18 @@ def create_app(settings=None, provider="auto", store=None):
          expose_headers=["X-Aura-Source"])
     app.register_blueprint(api)
     sock.init_app(app)
+
+    @app.before_request
+    def start_timer():
+        g.started = time.perf_counter()
+
+    @app.after_request
+    def log_request(response):
+        # path only: no query string, body or client address
+        started = getattr(g, "started", None)
+        took = int((time.perf_counter() - started) * 1000) if started else 0
+        access_log.info("%s %s %s %dms", request.method, request.path, response.status_code, took)
+        return response
 
     @app.errorhandler(HTTPException)
     def handle_http_error(err):
