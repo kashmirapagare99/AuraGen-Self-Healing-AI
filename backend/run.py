@@ -7,9 +7,9 @@ load_dotenv()
 from app import create_app  # noqa: E402
 from app.config import load_settings  # noqa: E402
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
-
 settings = load_settings()
+logging.basicConfig(level=settings.log_level, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+
 application = create_app(settings)
 
 if __name__ == "__main__":

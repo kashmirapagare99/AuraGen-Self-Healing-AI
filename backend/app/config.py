@@ -8,6 +8,7 @@ class Settings:
     cors_origins: tuple = ("http://localhost:3000", "http://127.0.0.1:3000")
     db_path: str = "data/auragen.db"
     rate_limit_per_min: int = 60
+    log_level: str = "INFO"
     llm_provider: str = "auto"
     groq_api_key: str = ""
     groq_model: str = "openai/gpt-oss-20b"
@@ -24,6 +25,7 @@ def load_settings(env=None):
         cors_origins=tuple(o.strip() for o in origins.split(",") if o.strip()),
         db_path=env.get("DB_PATH", "data/auragen.db"),
         rate_limit_per_min=int(env.get("RATE_LIMIT_PER_MIN", 60)),
+        log_level=env.get("LOG_LEVEL", "INFO").strip().upper(),
         llm_provider=env.get("LLM_PROVIDER", "auto").strip().lower(),
         groq_api_key=env.get("GROQ_API_KEY", "").strip(),
         groq_model=env.get("GROQ_MODEL", "openai/gpt-oss-20b"),
