@@ -188,3 +188,17 @@ def test_requests_are_logged_without_their_content(client, caplog):
     assert "POST /api/adaptive-ui 200" in text
     assert "secret" not in text
     assert "score" not in text
+
+
+def test_security_headers(client):
+    res = post(client, {"score": 1, "events": []})
+    assert res.headers["X-Content-Type-Options"] == "nosniff"
+    assert res.headers["X-Frame-Options"] == "DENY"
+    assert res.headers["Referrer-Policy"] == "no-referrer"
+    assert res.headers["Cache-Control"] == "no-store"
+
+
+def test_only_api_routes_are_marked_no_store(client):
+    assert "Cache-Control" not in client.get("/health").headers
+    # errors get the headers as well
+    assert client.get("/nope").headers["X-Content-Type-Options"] == "nosniff"

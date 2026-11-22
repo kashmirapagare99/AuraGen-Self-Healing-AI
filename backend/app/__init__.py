@@ -49,6 +49,15 @@ def create_app(settings=None, provider="auto", store=None):
         access_log.info("%s %s %s %dms", request.method, request.path, response.status_code, took)
         return response
 
+    @app.after_request
+    def add_security_headers(response):
+        response.headers.setdefault("X-Content-Type-Options", "nosniff")
+        response.headers.setdefault("X-Frame-Options", "DENY")
+        response.headers.setdefault("Referrer-Policy", "no-referrer")
+        if request.path.startswith("/api/"):
+            response.headers.setdefault("Cache-Control", "no-store")
+        return response
+
     @app.errorhandler(HTTPException)
     def handle_http_error(err):
         names = {404: "not_found", 405: "method_not_allowed", 413: "payload_too_large"}
