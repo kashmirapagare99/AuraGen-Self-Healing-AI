@@ -1,5 +1,6 @@
 import logging
 
+from .errors import describe
 from .layouts import count_causes, fallback_layout, mode_for, pick_reason
 from .schemas import AdaptiveResponse
 
@@ -23,7 +24,6 @@ class AdaptiveService:
                     return AdaptiveResponse(uiSpec=spec, reason=reason), "llm"
                 log.info("no usable generated layout, using the rule based one")
             except Exception as exc:
-                log.warning("layout generation failed (%s), using the rule based one",
-                            type(exc).__name__)
+                log.warning("layout generation failed (%s), using the rule based one", describe(exc))
 
         return AdaptiveResponse(uiSpec=fallback_layout(reason), reason=reason), "rules"

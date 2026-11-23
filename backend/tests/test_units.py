@@ -2,6 +2,7 @@ import pytest
 
 from app import ratelimit
 from app.db import MetricsStore
+from app.errors import describe
 from app.layouts import count_causes, fallback_layout, mode_for, pick_reason
 from app.ratelimit import RateLimiter
 from app.schemas import FrictionEvent
@@ -129,3 +130,14 @@ class TestLayoutRules:
         layout = fallback_layout("hesitation")
         assert layout.mode == "one_question"
         assert sum(len(step.fields) for step in layout.steps) == 14
+
+
+class TestDescribe:
+    def test_includes_type_and_message(self):
+        assert describe(RuntimeError("Groq returned HTTP 404: model gone")) ==             "RuntimeError: Groq returned HTTP 404: model gone"
+
+    def test_type_only_when_there_is_no_message(self):
+        assert describe(TimeoutError()) == "TimeoutError"
+
+    def test_long_messages_are_cut(self):
+        assert len(describe(ValueError("x" * 1000))) == 200

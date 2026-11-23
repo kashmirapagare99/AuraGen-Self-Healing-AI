@@ -225,3 +225,14 @@ def test_public_config_has_no_secrets(make_app):
 def test_public_config_without_a_provider(client):
     body = client.get("/api/config").get_json()
     assert body["provider"] == "rules" and body["model"] is None
+
+
+def test_ai_failure_is_logged_with_its_reason(make_app, caplog):
+    provider = StubProvider(error=RuntimeError("Groq returned HTTP 404: model gone"))
+    client = make_app(provider=provider).test_client()
+
+    with caplog.at_level("WARNING", logger="app.adaptive"):
+        res = post(client, {"score": 50, "events": []})
+
+    assert res.headers["X-Aura-Source"] == "rules"
+    assert "HTTP 404" in caplog.text

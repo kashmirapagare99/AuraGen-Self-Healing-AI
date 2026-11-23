@@ -144,3 +144,10 @@ def test_bad_requests(client, body):
 
 def test_not_json(client):
     assert client.post("/api/insights", data="x", content_type="text/plain").status_code == 400
+
+
+def test_suggestion_failure_is_logged_with_its_reason(make_app, caplog):
+    provider = TextProvider(error=RuntimeError("Groq returned HTTP 429: slow down"))
+    with caplog.at_level("WARNING", logger="app.insights"):
+        ask(make_app(provider=provider).test_client())
+    assert "HTTP 429" in caplog.text

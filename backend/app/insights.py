@@ -3,6 +3,7 @@ import logging
 
 from pydantic import ValidationError
 
+from .errors import describe
 from .layouts import count_causes
 from .schemas import Insights, InsightsResponse
 
@@ -132,8 +133,7 @@ class InsightsService:
                                                 provider=self.provider.name)
                 log.info("no usable generated suggestions, using the rule based ones")
             except Exception as exc:
-                log.warning("suggestion generation failed (%s), using the rule based ones",
-                            type(exc).__name__)
+                log.warning("suggestion generation failed (%s), using the rule based ones", describe(exc))
 
         return InsightsResponse(**rule_based(context, stats).model_dump(), source="rules",
                                 provider="rules")
