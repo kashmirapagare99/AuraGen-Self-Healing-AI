@@ -2,7 +2,7 @@ import pytest
 
 from app import ratelimit
 from app.db import MetricsStore
-from app.errors import describe
+from app.errors import describe, provider_label
 from app.layouts import count_causes, fallback_layout, mode_for, pick_reason
 from app.ratelimit import RateLimiter
 from app.schemas import FrictionEvent
@@ -141,3 +141,26 @@ class TestDescribe:
 
     def test_long_messages_are_cut(self):
         assert len(describe(ValueError("x" * 1000))) == 200
+
+
+class TestProviderLabel:
+    def test_name_and_model(self):
+        class Fake:
+            name = "groq"
+            model = "some-model"
+
+        assert provider_label(Fake()) == "groq (some-model)"
+
+    def test_name_only_when_there_is_no_model(self):
+        class Fake:
+            name = "claude"
+
+        assert provider_label(Fake()) == "claude"
+
+    def test_never_exposes_a_key(self):
+        class Fake:
+            name = "groq"
+            model = "m"
+            api_key = "dummy-secret-for-test"
+
+        assert "dummy-secret" not in provider_label(Fake())

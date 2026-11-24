@@ -236,3 +236,16 @@ def test_ai_failure_is_logged_with_its_reason(make_app, caplog):
 
     assert res.headers["X-Aura-Source"] == "rules"
     assert "HTTP 404" in caplog.text
+
+
+def test_failure_log_names_the_provider_and_model(make_app, caplog):
+    class Named(StubProvider):
+        name = "groq"
+        model = "some-model"
+
+    client = make_app(provider=Named(error=RuntimeError("Groq returned HTTP 503: busy"))).test_client()
+    with caplog.at_level("WARNING", logger="app.adaptive"):
+        post(client, {"score": 50, "events": []})
+
+    assert "groq (some-model)" in caplog.text
+    assert "HTTP 503" in caplog.text
