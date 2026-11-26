@@ -8,17 +8,98 @@
     --foreground: 222.2 84% 4.9%;
   }
 
-  * {
-    border-color: #e2e8f0;
+  body {
+    @apply bg-slate-50 text-slate-900;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .subtle-border {
+    @apply border border-slate-200/80;
   }
 
-  body {
-    background-color: #f8fafc;
-    color: #0f172a;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-md border border-slate-200/80 shadow-card;
   }
+}
+
+*:focus-visible {
+  outline: 2px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+.a11y-large {
+  font-size: 112.5%;
+}
+
+.a11y-dark {
+  color-scheme: dark;
+  color: #f8fafc;
+  background-color: #0f172a;
+}
+
+.a11y-dark .bg-white,
+.a11y-dark .bg-slate-50,
+.a11y-dark [class*="bg-slate-50/"],
+.a11y-dark [class*="bg-slate-100"] {
+  background-color: #1e293b !important;
+}
+
+.a11y-dark [class*="text-slate-900"],
+.a11y-dark [class*="text-slate-800"],
+.a11y-dark [class*="text-slate-700"] {
+  color: #f8fafc !important;
+}
+
+.a11y-dark [class*="text-slate-600"],
+.a11y-dark [class*="text-slate-500"],
+.a11y-dark [class*="text-slate-400"] {
+  color: #cbd5e1 !important;
+}
+
+.a11y-dark [class*="border-slate-"] {
+  border-color: #475569 !important;
+}
+
+.a11y-dark input,
+.a11y-dark select,
+.a11y-dark textarea {
+  color-scheme: dark;
+}
+
+.a11y-high-contrast {
+  color: #fff;
+  background-color: #000;
+}
+
+.a11y-high-contrast .bg-white,
+.a11y-high-contrast [class*="bg-slate-"],
+.a11y-high-contrast [class*="bg-aura-50"],
+.a11y-high-contrast [class*="bg-emerald-50"],
+.a11y-high-contrast [class*="bg-amber-50"],
+.a11y-high-contrast [class*="bg-rose-50"],
+.a11y-high-contrast [class*="bg-indigo-50"] {
+  color: #fff !important;
+  background-color: #000 !important;
+}
+
+.a11y-high-contrast [class*="text-slate-"],
+.a11y-high-contrast [class*="text-aura-"],
+.a11y-high-contrast [class*="text-indigo-"],
+.a11y-high-contrast [class*="text-emerald-"],
+.a11y-high-contrast [class*="text-amber-"],
+.a11y-high-contrast [class*="text-rose-"] {
+  color: #fff !important;
+}
+
+.a11y-high-contrast [class*="border-"] {
+  border-color: #fff !important;
+}
+
+.a11y-high-contrast :focus-visible {
+  outline: 3px solid #ffbf00 !important;
+  outline-offset: 3px !important;
 }
 
 /* Custom subtle scrollbars */
@@ -33,7 +114,7 @@
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 9999px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

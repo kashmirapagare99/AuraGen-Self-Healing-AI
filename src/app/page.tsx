@@ -1,241 +1,246 @@
 import React from "react";
 import Link from "next/link";
-import { 
-  Sparkles, 
-  ArrowRight, 
-  CheckCircle2, 
-  Activity, 
-  Layers, 
-  ShieldCheck, 
-  Sliders, 
+import {
+  Sparkles,
+  ArrowRight,
+  CheckCircle2,
+  Activity,
+  Layers,
+  ShieldCheck,
+  Sliders,
   Workflow,
   Wand2,
   FileSpreadsheet,
-  MousePointerClick,
-  Clock,
-  AlertCircle
+  Zap,
+  BarChart2,
+  HelpCircle,
 } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { Button } from "@/components/ui/Button";
+import { ButtonLink } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
 
-export default function LandingPage() {
-  const features = [
+export default function HomePage() {
+  const valueProps = [
     {
       icon: Activity,
       title: "Real-Time Friction Detection",
       description:
-        "Analyzes repeated clicks, input hesitation, validation error loops, and pause intervals to detect when users struggle.",
-      color: "text-aura-600 bg-aura-50",
+        "Passively monitors hesitation, repeat clicks, and repeated validation failures on complex forms without transmitting sensitive form data.",
     },
     {
       icon: Wand2,
-      title: "Self-Healing UI Transformation",
+      title: "Dynamic Layout Adaptation",
       description:
-        "Dynamically transforms multi-section dense forms into progressive, step-by-step guided wizards without page refreshes.",
-      color: "text-indigo-600 bg-indigo-50",
-    },
-    {
-      icon: Layers,
-      title: "100% State Preservation",
-      description:
-        "All entered values, validation states, and draft inputs are preserved bidirectionally when switching between interfaces.",
-      color: "text-emerald-600 bg-emerald-50",
+        "Transforms dense multi-column interfaces into focused, bite-sized multi-step wizards when cognitive overload is detected.",
     },
     {
       icon: ShieldCheck,
-      title: "Privacy-Preserving Telemetry",
+      title: "Zero-Data-Loss Guarantee",
       description:
-        "Zero sensitive financial inputs or credentials are ever recorded. Tracking is purely local, client-side, and opt-in.",
-      color: "text-amber-600 bg-amber-50",
+        "Seamlessly transfers 100% of partially filled form fields back and forth between standard and simplified views.",
+    },
+    {
+      icon: Sliders,
+      title: "Accessibility & Personalization",
+      description:
+        "Customizable sensory modes including high-contrast palettes, scalable font sizing, and assistive form field helpers.",
     },
   ];
 
-  const steps = [
+  const workflowSteps = [
     {
       step: "01",
-      icon: MousePointerClick,
-      title: "Observe Interaction Patterns",
-      description:
-        "As users navigate forms, client-side heuristics unobtrusively observe hesitation times, repeated clicks, and field errors.",
+      name: "Complex Form Ingestion",
+      desc: "User interacts with a dense, multi-section financial loan application.",
     },
     {
       step: "02",
-      icon: Activity,
-      title: "Calculate Friction Score",
-      description:
-        "A rule-based heuristic score (0–100) measures potential interaction difficulty in real-time.",
+      name: "Heuristic Signal Analysis",
+      desc: "Client-side friction engine registers hesitation spikes and validation loops.",
     },
     {
       step: "03",
-      icon: AlertCircle,
-      title: "Contextual Assistance Suggestion",
-      description:
-        "When friction crosses configured thresholds, AuraGen suggests simplifying the workflow rather than forcing sudden changes.",
+      name: "Dynamic Wizard Generation",
+      desc: "Deterministic component generator offers an accessible, step-by-step layout.",
     },
     {
       step: "04",
-      icon: Workflow,
-      title: "Guided Multi-Step Adaptation",
-      description:
-        "Users activate simplified mode with one click, transitioning seamlessly into a step-by-step guided wizard.",
+      name: "Completion & Review",
+      desc: "User completes application with higher conversion and lower abandonment.",
     },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/70">
+    <div className="flex flex-col min-h-screen">
       <Navbar />
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative overflow-hidden pt-16 pb-20 lg:pt-24 lg:pb-32 border-b border-slate-200/60 bg-gradient-to-b from-white to-slate-50/50">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-70" />
+        <section className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-32">
+          {/* Subtle background glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-gradient-to-b from-aura-100/50 via-aura-50/20 to-transparent blur-3xl -z-10 pointer-events-none" />
 
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-aura-50 border border-aura-200/80 text-xs font-semibold text-aura-800 shadow-subtle">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+            {/* Version Badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-aura-200 bg-aura-50/80 text-aura-800 text-xs font-semibold shadow-subtle animate-in fade-in slide-in-from-bottom-2 duration-500">
               <Sparkles className="w-3.5 h-3.5 text-aura-600" />
-              <span>Next-Generation Adaptive Web Platform</span>
+              <span>AuraGen Prototype 1.0 – Self-Healing Generative UI</span>
             </div>
 
-            <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.15]">
-                Interfaces That <br className="hidden sm:inline" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-aura-700 via-aura-600 to-indigo-600">
-                  Adapt to You.
-                </span>
-              </h1>
-              <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
-                AuraGen transforms complex user interfaces into simpler experiences by identifying interaction difficulties and adapting workflows dynamically.
-              </p>
-            </div>
+            {/* Main Headline */}
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight max-w-4xl mx-auto leading-[1.12]">
+              Web interfaces that{" "}
+              <span className="bg-gradient-to-r from-aura-600 to-indigo-600 bg-clip-text text-transparent">
+                adapt to user friction
+              </span>{" "}
+              in real-time.
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
+              Detect user hesitation, validation errors, and repetitive interaction patterns. Automatically generate simplified, accessible guided workflows with guaranteed zero data loss.
+            </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
-              <Link href="/dashboard" className="w-full sm:w-auto">
-                <Button size="lg" variant="accent" className="w-full sm:w-auto font-semibold shadow-card" rightIcon={<ArrowRight className="w-4 h-4" />}>
-                  Explore Dashboard
-                </Button>
-              </Link>
-              <Link href="/application" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto font-semibold" leftIcon={<FileSpreadsheet className="w-4 h-4 text-slate-500" />}>
-                  Try Complex Form
-                </Button>
-              </Link>
+              <ButtonLink
+                href="/dashboard"
+                size="lg"
+                variant="accent"
+                className="w-full sm:w-auto font-semibold shadow-card"
+                rightIcon={<ArrowRight className="w-4 h-4" />}
+              >
+                Explore Dashboard
+              </ButtonLink>
+              <ButtonLink
+                href="/application"
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto font-semibold"
+                leftIcon={<FileSpreadsheet className="w-4 h-4 text-slate-500" />}
+              >
+                Try Complex Form
+              </ButtonLink>
             </div>
 
             {/* Trust / Signal Badges */}
-            <div className="pt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500">
+            <div className="pt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs text-slate-500 font-medium">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Zero Data Loss on Mode Switch</span>
+                <span>Zero Server-Side Telemetry Leakage</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Client-Side Privacy Architecture</span>
+                <span>Deterministic React AST Generation</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>Validated Schema-Driven UI</span>
+                <span>Full State Preservation</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Feature Overview */}
-        <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-            <Badge variant="indigo">Architecture & Capabilities</Badge>
-            <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-              Built for Real-World Complexity
-            </h2>
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              When users encounter friction in enterprise dashboards or dense multi-page forms, AuraGen acts as an empathetic co-pilot that simplifies navigation.
-            </p>
-          </div>
+        {/* Feature Cards Grid */}
+        <section className="py-16 bg-white border-y border-slate-200/80">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                Engineered for High-Stakes Complexity
+              </h2>
+              <p className="text-sm sm:text-base text-slate-600">
+                Designed for enterprise lending, insurance underwriting, and regulated applications where drop-off rates directly hurt customer outcomes.
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, idx) => {
-              const Icon = feature.icon;
-              return (
-                <Card key={idx} hoverEffect className="flex flex-col justify-between">
-                  <CardHeader className="border-0 pb-0">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${feature.color}`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <CardTitle className="text-base font-semibold">{feature.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-2 text-sm text-slate-500 leading-relaxed">
-                    {feature.description}
-                  </CardContent>
-                </Card>
-              );
-            })}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {valueProps.map((prop, idx) => {
+                const Icon = prop.icon;
+                return (
+                  <Card key={idx} hoverEffect className="flex flex-col justify-between">
+                    <CardHeader>
+                      <div className="w-10 h-10 rounded-xl bg-aura-50 border border-aura-100 flex items-center justify-center text-aura-600 mb-2">
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <CardTitle className="text-base">{prop.title}</CardTitle>
+                      <CardDescription className="text-xs leading-relaxed pt-1">
+                        {prop.description}
+                      </CardDescription>
+                    </CardHeader>
+                  </Card>
+                );
+              })}
+            </div>
           </div>
         </section>
 
         {/* How It Works Section */}
-        <section className="py-20 bg-white border-y border-slate-200/70">
+        <section className="py-20 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-              <Badge variant="default">The Adaptation Lifecycle</Badge>
-              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">
-                How AuraGen Adapts in Real Time
+            <div className="text-center max-w-3xl mx-auto space-y-3 mb-16">
+              <Badge variant="indigo">Architecture Pipeline</Badge>
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+                From Friction Detection to Guided Resolution
               </h2>
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                A non-intrusive 4-step workflow that respects user autonomy while eliminating workflow bottlenecks.
+              <p className="text-sm sm:text-base text-slate-600">
+                A closed-loop client-side telemetry and generative layout pipeline operating securely in the browser.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {steps.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <div key={idx} className="relative flex flex-col space-y-3 p-5 rounded-2xl bg-slate-50 border border-slate-200/60">
-                    <div className="flex items-center justify-between">
-                      <div className="w-9 h-9 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-aura-700 shadow-subtle font-bold text-xs">
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <span className="text-2xl font-black text-slate-300 font-mono">
-                        {item.step}
-                      </span>
-                    </div>
-                    <h3 className="text-base font-semibold text-slate-900 pt-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      {item.description}
-                    </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+              {workflowSteps.map((step, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-subtle space-y-3 relative overflow-hidden"
+                >
+                  <div className="text-3xl font-black text-aura-100 select-none">
+                    {step.step}
                   </div>
-                );
-              })}
-            </div>
-
-            {/* Interactive Preview Callout */}
-            <div className="mt-14 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-aura-900 via-indigo-950 to-slate-900 text-white shadow-elevated flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-aura-500/20 text-aura-300 text-xs font-medium border border-aura-400/30">
-                  <Sparkles className="w-3.5 h-3.5" /> Live Demonstration Ready
+                  <h3 className="text-base font-bold text-slate-900 leading-snug">
+                    {step.name}
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    {step.desc}
+                  </p>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold">
-                  Experience the Adaptive Transformation
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Call to Action Banner */}
+        <section className="py-16 bg-white border-t border-slate-200/80">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-8 sm:p-12 text-white shadow-elevated flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="space-y-3 text-center md:text-left">
+                <Badge variant="indigo" className="bg-white/10 text-white border-white/20">
+                  Ready to test?
+                </Badge>
+                <h3 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                  Experience self-healing UI in action
                 </h3>
                 <p className="text-slate-300 text-sm max-w-xl">
-                  Test the complex financial form, trigger intentional friction events, and watch AuraGen automatically suggest a streamlined 4-step wizard.
+                  Try our interactive financial form and trigger client-side friction heuristics to see dynamic layout generation.
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
-                <Link href="/application" className="w-full sm:w-auto">
-                  <Button size="lg" className="w-full sm:w-auto bg-white text-slate-900 hover:bg-slate-100 font-semibold shadow-card">
-                    Launch Financial Form
-                  </Button>
-                </Link>
-                <Link href="/dashboard" className="w-full sm:w-auto">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto text-white border-white/20 hover:bg-white/10 font-medium">
-                    Open Dashboard
-                  </Button>
-                </Link>
+                <ButtonLink
+                  href="/application"
+                  size="lg"
+                  className="w-full sm:w-auto bg-white text-slate-900 hover:bg-slate-100 font-semibold shadow-card"
+                >
+                  Launch Financial Form
+                </ButtonLink>
+                <ButtonLink
+                  href="/dashboard"
+                  size="lg"
+                  variant="outline"
+                  className="w-full sm:w-auto text-white border-white/20 hover:bg-white/10 font-medium"
+                >
+                  Open Dashboard
+                </ButtonLink>
               </div>
             </div>
           </div>

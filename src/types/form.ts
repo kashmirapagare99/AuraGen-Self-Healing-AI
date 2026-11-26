@@ -3,10 +3,10 @@ import { z } from "zod";
 export const financialFormSchema = z.object({
   // Section A: Personal Information
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  email: z.string().email("Please provide a valid email address"),
+  phone: z.string().min(10, "Please provide a valid 10-digit phone number"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
-  residentialAddress: z.string().min(5, "Address must be at least 5 characters"),
+  residentialAddress: z.string().min(5, "Please provide your residential address"),
 
   // Section B: Financial Information
   employmentStatus: z.enum(
@@ -33,7 +33,8 @@ export const financialFormSchema = z.object({
   }),
 });
 
-export type FinancialFormData = z.infer<typeof financialFormSchema>;
+export type FinancialFormInput = z.input<typeof financialFormSchema>;
+export type FinancialFormData = z.output<typeof financialFormSchema>;
 
 export const defaultFormData: FinancialFormData = {
   fullName: "",
@@ -44,7 +45,7 @@ export const defaultFormData: FinancialFormData = {
   employmentStatus: "employed",
   employmentType: "full_time",
   monthlyIncome: 5000,
-  existingObligations: 800,
+  existingObligations: 500,
   applicationType: "personal_loan",
   requestedAmount: 15000,
   applicationPurpose: "",
@@ -54,4 +55,21 @@ export const defaultFormData: FinancialFormData = {
 
 export type FormSectionKey = "personal" | "financial" | "application" | "review";
 
-export type FormFieldKey = keyof FinancialFormData;
+export const formFieldKeys = [
+  "fullName",
+  "email",
+  "phone",
+  "dateOfBirth",
+  "residentialAddress",
+  "employmentStatus",
+  "employmentType",
+  "monthlyIncome",
+  "existingObligations",
+  "applicationType",
+  "requestedAmount",
+  "applicationPurpose",
+  "additionalInformation",
+  "agreedToTerms",
+] as const satisfies readonly (keyof FinancialFormData)[];
+
+export type FormFieldKey = (typeof formFieldKeys)[number];

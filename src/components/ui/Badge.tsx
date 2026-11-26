@@ -3,12 +3,14 @@ import { cn } from "@/utils/cn";
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: "default" | "indigo" | "success" | "warning" | "danger" | "outline";
+  size?: "sm" | "md";
   dot?: boolean;
 }
 
 export function Badge({
   className,
   variant = "default",
+  size = "md",
   dot = false,
   children,
   ...props
@@ -20,6 +22,11 @@ export function Badge({
     warning: "bg-amber-50 text-amber-800 border-amber-200",
     danger: "bg-rose-50 text-rose-700 border-rose-200",
     outline: "bg-transparent text-slate-600 border-slate-300",
+  };
+
+  const sizeStyles = {
+    sm: "text-[11px] px-2 py-0.5",
+    md: "text-xs px-2.5 py-0.5",
   };
 
   const dotColors = {
@@ -34,8 +41,9 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border",
+        "inline-flex items-center gap-1.5 rounded-full font-medium border",
         variantStyles[variant],
+        sizeStyles[size],
         className
       )}
       {...props}

@@ -2,17 +2,21 @@ export type FrictionEventType =
   | "repeated_click"
   | "validation_error"
   | "extended_hesitation"
+  | "field_time"
+  | "long_pause"
+  | "repeated_attempt"
   | "repeated_interaction"
   | "mode_toggle"
   | "step_abandonment";
 
 export interface FrictionEvent {
-  id: string;
+  id?: string;
   type: FrictionEventType;
   fieldId?: string;
   timestamp: number;
-  weight: number;
-  description: string;
+  weight?: number;
+  description?: string;
+  durationMs?: number;
 }
 
 export type FrictionLevel = "low" | "moderate" | "high";
@@ -29,10 +33,11 @@ export interface FrictionState {
   isAssistanceTriggered: boolean;
   isAssistanceDismissed: boolean;
   trackingConsent: boolean;
-  threshold: number; // default e.g. 50 or 60
+  threshold: number;
 }
 
 export interface FrictionScoringWeights {
+  [key: string]: any;
   repeatedClick: number;
   validationError: number;
   extendedHesitation: number;
@@ -45,3 +50,11 @@ export const DEFAULT_FRICTION_WEIGHTS: FrictionScoringWeights = {
   extendedHesitation: 10,
   repeatedInteraction: 10,
 };
+
+export interface InteractionMetric {
+  hesitationCount: number;
+  repeatedClicksCount: number;
+  validationErrorsCount: number;
+  totalTimeSpentSeconds: number;
+  estimatedFrictionScore: number;
+}
