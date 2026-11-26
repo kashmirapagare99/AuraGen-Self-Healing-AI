@@ -157,3 +157,13 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Python & Backend (Flask / Pytest)
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+data/
+instance/
