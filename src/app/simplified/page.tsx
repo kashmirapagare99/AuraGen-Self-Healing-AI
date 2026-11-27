@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { UISpecRenderer } from "@/components/adaptive/UISpecRenderer";
 import { useAdaptiveUI } from "@/contexts/AdaptiveUIContext";
-import { AdaptiveUIReason } from "@/services/api";
+import { AdaptiveUIReason, reportOutcome, type OutcomeRequest } from "@/services/api";
 import { useFormState } from "@/contexts/FormStateContext";
 import { useTelemetry } from "@/hooks/useTelemetry";
 import {
@@ -52,11 +52,12 @@ export default function SimplifiedPage() {
   );
   const [stepIndex, setStepIndex] = useState(0);
   const [submissionMessage, setSubmissionMessage] = useState("");
+  const [outcomeReported, setOutcomeReported] = useState(false);
   const invalidAttemptCount = useRef(0);
   const stepHeadingRef = useRef<HTMLHeadingElement>(null);
   const previousStepState = useRef({ stepIndex, oneQuestionMode });
   const methods = useForm<FinancialFormInput, unknown, FinancialFormData>({
-    resolver: zodResolver(financialFormSchema),
+    resolver: zodResolver(financialFormSchema) as any,
     defaultValues: formData,
     mode: "onTouched",
   });
@@ -68,7 +69,7 @@ export default function SimplifiedPage() {
       updateFormData({
         ...updatedValues,
         additionalInformation: updatedValues.additionalInformation ?? "",
-      });
+      } as Partial<FinancialFormData>);
       setSubmissionMessage("");
     });
 
@@ -131,12 +132,35 @@ export default function SimplifiedPage() {
     );
   };
 
-  const onValidSubmit = (data: FinancialFormData) => {
+  const onValidSubmit = async (data: FinancialFormData) => {
     invalidAttemptCount.current = 0;
     updateFormData(data);
     setSubmissionMessage(
       "Your application passed local validation. No information was sent."
     );
+
+    if (!outcomeReported && beforeScore !== null && trackingEnabled) {
+      const outcome: OutcomeRequest = {
+        reason,
+        mode: spec.mode,
+        beforeScore,
+        afterScore: postAdaptationScore,
+      };
+      try {
+        const reported = await reportOutcome(outcome);
+        if (reported) {
+          setOutcomeReported(true);
+        } else {
+          setSubmissionMessage(
+            "Your application passed local validation. The optional outcome API is not configured; no application details were sent."
+          );
+        }
+      } catch {
+        setSubmissionMessage(
+          "Your application passed local validation, but outcome metrics could not be recorded. No application details were sent."
+        );
+      }
+    }
   };
 
   const onNext = async () => {

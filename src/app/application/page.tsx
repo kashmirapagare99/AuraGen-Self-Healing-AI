@@ -90,7 +90,7 @@ export default function ApplicationPage() {
     reset,
     formState: { errors },
   } = useForm<FinancialFormInput, unknown, FinancialFormData>({
-    resolver: zodResolver(financialFormSchema),
+    resolver: zodResolver(financialFormSchema) as any,
     defaultValues: formData,
     mode: "onTouched",
   });
@@ -101,7 +101,7 @@ export default function ApplicationPage() {
       updateFormData({
         ...updatedValues,
         additionalInformation: updatedValues.additionalInformation ?? "",
-      });
+      } as Partial<FinancialFormData>);
       setSubmissionMessage("");
     });
 

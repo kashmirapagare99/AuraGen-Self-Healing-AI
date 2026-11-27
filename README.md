@@ -1,10 +1,11 @@
 # AuraGen — Self-Healing Adaptive UI
 
-AuraGen is a frontend-only prototype that demonstrates how a complex financial
+AuraGen is a frontend prototype that demonstrates how a complex financial
 application can offer an optional, guided layout when users encounter
 interaction friction. It uses Next.js 16, React 18, TypeScript, and Tailwind
-CSS 3. The application is mock-first: it has no production backend, database,
-authentication, or real LLM integration.
+CSS 3. The repository does not include a backend, database, authentication, or
+LLM integration; the frontend runs with local mock behavior unless an optional
+external Flask API is configured.
 
 The cognitive-load score is a prototype heuristic, not a validated measure of
 cognitive state.
@@ -20,6 +21,8 @@ cognitive state.
 - Scripted `/demo` scenarios for normal, slow, repeated-click, validation-error,
   and high-load interactions.
 - Session-only analytics charts and an aggregate before/after CSV export.
+- Optional integration with an external Flask service for adaptive UI,
+  rule-based or backend-generated insights, and aggregate metrics.
 - Temporary font-size, high-contrast, and theme accessibility preferences.
 
 ## Routes
@@ -76,21 +79,37 @@ not installed, run `npx playwright install chromium`.
 ## Privacy and data boundaries
 
 - Tracking is off until explicit consent. Opting out clears the current session
-  event list.
-- Events contain types and timings only; field names and typed values are not
-  captured.
+  event list and prevents new telemetry requests.
+- With the optional backend configured, consented requests contain only an
+  allowlisted prototype score and event type/timing fields, plus the reason,
+  mode, and before/after scores when reporting an adapted outcome. Field
+  identifiers, descriptions, typed values, and personal or financial form data
+  are not included.
 - Financial drafts stay in React memory and are never written to local storage
-  or included in telemetry exports.
-- Dashboard operational totals/activity are illustrative; demo scenario
-  signals are simulated. No backend data is connected.
+  or included in telemetry requests or exports.
+- Dashboard operational activity is illustrative; demo scenario signals are
+  simulated. Backend aggregate metrics are fetched only when the optional
+  service is configured.
 - Session state is lost on a full page reload.
 - UI specifications are Zod-validated and rendered only through predefined
-  controls. The mock service calls no LLM.
+  controls. The frontend mock calls no LLM.
 
-## Adaptive API configuration
+## Optional Flask API integration
 
-The mock implementation is used by default. To select the fetch-based service,
-set `NEXT_PUBLIC_AURAGEN_ADAPTIVE_API_URL` to the backend endpoint before
-starting Next.js. The public variable is not a place for secrets or credentials.
-Requests contain only a prototype score and privacy-safe event types/timings;
-responses must satisfy the schema described in [docs/api-contract.md](./docs/api-contract.md).
+The local mock is used by default. To enable the external Flask integration,
+set `NEXT_PUBLIC_AURAGEN_ADAPTIVE_API_URL` to the service's adaptive UI endpoint
+before starting Next.js:
+
+```powershell
+$env:NEXT_PUBLIC_AURAGEN_ADAPTIVE_API_URL = "http://127.0.0.1:4000/api/adaptive-ui"
+npm run dev
+```
+
+The frontend uses that endpoint for adaptive UI requests and derives the API
+base URL for `/api/insights`, `/api/metrics/summary`, and
+`/api/metrics/outcome`. Insights and aggregate metrics are optional; when the
+variable is unset, local adaptive UI behavior remains available and backend
+insights/metrics are omitted. The public variable is not a place for secrets or
+credentials. Telemetry payloads are allowlisted and validated before sending.
+See [docs/api-contract.md](./docs/api-contract.md) for request and response
+shapes.

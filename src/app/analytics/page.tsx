@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Activity, ArrowRight, Download, MousePointerClick } from "lucide-react";
+import { Activity, ArrowRight, Download, MousePointerClick, Database, TrendingUp } from "lucide-react";
 import { AccessibilityControls } from "@/components/accessibility/AccessibilityControls";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -21,6 +21,7 @@ import { useAdaptiveUI } from "@/contexts/AdaptiveUIContext";
 import { useTelemetryContext } from "@/contexts/TelemetryContext";
 import { FrictionEvent, FrictionEventType } from "@/types/friction";
 import { scoreCognitiveLoad } from "@/utils/cognitive-load";
+import { requestMetricsSummary, type MetricsSummary } from "@/services/api";
 
 const displayedEvents = 20;
 
@@ -38,6 +39,38 @@ function toCsvCell(value: string | number) {
 export default function AnalyticsPage() {
   const { events, trackingEnabled } = useTelemetryContext();
   const { beforeScore, adaptedAt } = useAdaptiveUI();
+  const [metricsSummary, setMetricsSummary] = useState<MetricsSummary | null>(null);
+  const [summaryLoaded, setSummaryLoaded] = useState(false);
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const loadingSummary = !summaryLoaded;
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
+    const fetchSummary = async () => {
+      try {
+        const result = await requestMetricsSummary(controller.signal);
+        if (active) setMetricsSummary(result);
+      } catch (error) {
+        if (active && !(error instanceof Error && error.name === "AbortError")) {
+          setSummaryError(
+            error instanceof Error
+              ? error.message
+              : "An unexpected backend request error occurred."
+          );
+        }
+      } finally {
+        if (active) setSummaryLoaded(true);
+      }
+    };
+
+    void fetchSummary();
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, []);
 
   const currentScore = useMemo(() => scoreCognitiveLoad(events).score, [events]);
   const visibleEvents = events.slice(-displayedEvents);
@@ -109,7 +142,7 @@ export default function AnalyticsPage() {
       <div className="space-y-6">
         <PageHeader
           title="Interaction Telemetry & Analytics"
-          description="Explore privacy-safe signals held in memory for this browser session."
+          description="Explore privacy-safe signals held in memory for this browser session and backend aggregates."
           badge={
             <Badge variant={trackingEnabled ? "success" : "outline"} dot>
               {trackingEnabled ? "Tracking active" : "Tracking off"}
@@ -139,9 +172,112 @@ export default function AnalyticsPage() {
 
         <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           Prototype analytics only. Demo-route scenarios are scripted and
-          simulated; no backend data is connected. Turning tracking off clears
-          this session&apos;s telemetry.
+          simulated; optional backend aggregates are fetched when configured.
+          Turning tracking off clears this session&apos;s telemetry.
         </p>
+
+        {/* Backend Metrics Summary */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Database className="h-4 w-4 text-aura-600" />
+                  Backend Aggregate Metrics
+                </CardTitle>
+                <CardDescription>
+                  Anonymous aggregates from all consented sessions stored in the backend.
+                </CardDescription>
+              </div>
+              <Badge variant={metricsSummary ? "success" : "outline"} dot>
+                {metricsSummary ? "Connected" : "Not connected"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {loadingSummary ? (
+              <p className="text-sm text-slate-500">Loading backend metrics...</p>
+            ) : metricsSummary ? (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <BackendMetricCard
+                  title="Total Adaptations"
+                  value={metricsSummary.adaptations.total}
+                  description="Total layout adaptations recorded"
+                  icon={<TrendingUp className="h-4 w-4 text-aura-600" />}
+                />
+                <BackendMetricCard
+                  title="Avg Friction Score"
+                  value={
+                    metricsSummary.adaptations.averageScore !== null
+                      ? metricsSummary.adaptations.averageScore.toFixed(1)
+                      : "—"
+                  }
+                  description="Average friction score at adaptation"
+                  icon={<Activity className="h-4 w-4 text-indigo-600" />}
+                />
+                <BackendMetricCard
+                  title="Outcomes Recorded"
+                  value={metricsSummary.outcomes.total}
+                  description="Before/after outcome reports received"
+                  icon={<Database className="h-4 w-4 text-emerald-600" />}
+                />
+                <BackendMetricCard
+                  title="Improvement Rate"
+                  value={
+                    metricsSummary.outcomes.total > 0
+                      ? `${Math.round(
+                          (metricsSummary.outcomes.improved /
+                            metricsSummary.outcomes.total) *
+                            100
+                        )}%`
+                      : "—"
+                  }
+                  description="Outcomes where score decreased"
+                  icon={<TrendingUp className="h-4 w-4 text-rose-600" />}
+                />
+              </div>
+            ) : summaryError ? (
+              <p className="text-sm text-rose-700" role="alert">
+                Unable to load backend metrics: {summaryError}
+              </p>
+            ) : (
+              <p className="text-sm text-slate-500">
+                Backend not connected. Set NEXT_PUBLIC_AURAGEN_ADAPTIVE_API_URL to enable.
+              </p>
+            )}
+
+            {metricsSummary && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Adaptations by Reason
+                  </p>
+                  <p className="mt-1 text-sm font-mono text-slate-700">
+                    {JSON.stringify(metricsSummary.adaptations.byReason, null, 2)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Adaptations by Source
+                  </p>
+                  <p className="mt-1 text-sm font-mono text-slate-700">
+                    {JSON.stringify(metricsSummary.adaptations.bySource, null, 2)}
+                  </p>
+                </div>
+                <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 sm:col-span-2">
+                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                    Outcome Averages
+                  </p>
+                  <p className="mt-1 text-sm font-mono text-slate-700">
+                    Before:{" "}
+                    {metricsSummary.outcomes.averageBeforeScore?.toFixed(1) ?? "—"} | After:{" "}
+                    {metricsSummary.outcomes.averageAfterScore?.toFixed(1) ?? "—"}
+                  </p>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           <Card>
@@ -299,6 +435,33 @@ function MetricCard({
   title: string;
   description: string;
   value: number;
+  icon: React.ReactNode;
+}) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base">
+          {icon}
+          {title}
+        </CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-3xl font-black text-slate-900">{value}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function BackendMetricCard({
+  title,
+  value,
+  description,
+  icon,
+}: {
+  title: string;
+  value: string | number;
+  description: string;
   icon: React.ReactNode;
 }) {
   return (

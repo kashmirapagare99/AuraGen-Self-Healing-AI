@@ -20,9 +20,12 @@ export function ConsentBanner() {
           </h2>
           <p className="text-xs leading-relaxed text-slate-600">
             When enabled, AuraGen keeps interaction types and elapsed times in
-            this browser session only. It never records typed values or sends
-            telemetry to a server. Turning tracking off clears this session’s
-            collected events.
+            this browser session. If the optional backend is configured, only
+            allowlisted event types, timings, prototype scores, and outcome
+            reason/mode are sent. Field identifiers, descriptions, typed values,
+            and personal or financial information are never sent. Turning
+            tracking off clears this session’s events and stops new telemetry
+            requests.
           </p>
         </div>
         <label className="inline-flex shrink-0 items-center gap-2 text-sm font-medium text-slate-700">

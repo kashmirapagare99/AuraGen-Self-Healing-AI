@@ -10,8 +10,12 @@ export type FrictionEventType =
   | "step_abandonment";
 
 export interface FrictionEvent {
+  id?: string;
   type: FrictionEventType;
+  fieldId?: string;
   timestamp: number;
+  weight?: number;
+  description?: string;
   durationMs?: number;
 }
 
@@ -29,7 +33,7 @@ export interface FrictionState {
   isAssistanceTriggered: boolean;
   isAssistanceDismissed: boolean;
   trackingConsent: boolean;
-  threshold: number; // default e.g. 50 or 60
+  threshold: number;
 }
 
 export interface FrictionScoringWeights {
@@ -45,3 +49,11 @@ export const DEFAULT_FRICTION_WEIGHTS: FrictionScoringWeights = {
   extendedHesitation: 10,
   repeatedInteraction: 10,
 };
+
+export interface InteractionMetric {
+  hesitationCount: number;
+  repeatedClicksCount: number;
+  validationErrorsCount: number;
+  totalTimeSpentSeconds: number;
+  estimatedFrictionScore: number;
+}

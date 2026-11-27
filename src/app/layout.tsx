@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "AuraGen – Self-Healing Generative UI",
+  title: "AuraGen – Self-Healing Adaptive UI",
   description:
     "AI-powered adaptive web interface platform that observes user interaction friction and transforms complex workflows into guided, accessible experiences.",
 };

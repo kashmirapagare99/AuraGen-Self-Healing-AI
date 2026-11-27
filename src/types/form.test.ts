@@ -22,4 +22,30 @@ describe("financialFormSchema resolver", () => {
       values: {},
     });
   });
+
+  it("preserves select-field validation messages and existing financial defaults", () => {
+    const result = financialFormSchema.safeParse({
+      ...defaultFormData,
+      fullName: "Example Applicant",
+      email: "applicant@example.test",
+      phone: "4155550100",
+      dateOfBirth: "1988-01-12",
+      residentialAddress: "123 Example Street",
+      employmentStatus: "invalid",
+      employmentType: "invalid",
+      applicationType: "invalid",
+      applicationPurpose: "A valid application purpose",
+      agreedToTerms: true,
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.map((issue) => issue.message)).toEqual([
+        "Please select an employment status",
+        "Please select an employment type",
+        "Please select an application type",
+      ]);
+    }
+    expect(defaultFormData.existingObligations).toBe(800);
+  });
 });

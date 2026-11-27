@@ -72,7 +72,16 @@ web_modules/
 # dotenv environment variable files
 .env
 .env.*
+.env*.local
 !.env.example
+
+# Security & Certificates
+*.key
+*.cert
+*.pem
+
+# System files
+.DS_Store
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -89,9 +98,6 @@ dist
 
 # Gatsby files
 .cache/
-# Comment in the public line in if your project uses Gatsby and not Next.js
-# https://nextjs.org/blog/next-9-1#public-directory-support
-# public
 
 # vuepress build output
 .vuepress/dist
@@ -151,3 +157,19 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Python & Backend (Flask / Pytest)
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+data/
+instance/
+venv/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
